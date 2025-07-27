@@ -11,21 +11,6 @@ All colors MUST be HSL.
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
-    /* Clamp Generator Theme */
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-card: rgba(255, 255, 255, 0.95);
-    --gradient-success: linear-gradient(135deg, #e8f5e8, #f0fff0);
-    --gradient-error: linear-gradient(135deg, #ffe8e8, #fff0f0);
-    --gradient-info: rgba(52, 152, 219, 0.1);
-    --gradient-button: linear-gradient(135deg, #667eea, #764ba2);
-    --color-success: 120 61% 50%;
-    --color-error: 0 74% 58%;
-    --color-info: 204 70% 53%;
-    --color-glass-border: rgba(255, 255, 255, 0.2);
-    --shadow-glass: 0 20px 40px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 10px 25px rgba(102, 126, 234, 0.3);
-    --shadow-focus: 0 5px 15px rgba(102, 126, 234, 0.2);
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
@@ -54,20 +39,28 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Clamp Generator Theme */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-card: rgba(255, 255, 255, 0.95);
+    --gradient-success: linear-gradient(135deg, #e8f5e8, #f0fff0);
+    --gradient-error: linear-gradient(135deg, #ffe8e8, #fff0f0);
+    --gradient-info: rgba(52, 152, 219, 0.1);
+    --gradient-button: linear-gradient(135deg, #667eea, #764ba2);
+    --color-success: 120 61% 50%;
+    --color-error: 0 74% 58%;
+    --color-info: 204 70% 53%;
+    --color-glass-border: rgba(255, 255, 255, 0.2);
+    --shadow-glass: 0 20px 40px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 25px rgba(102, 126, 234, 0.3);
+    --shadow-focus: 0 5px 15px rgba(102, 126, 234, 0.2);
   }
 
   .dark {
