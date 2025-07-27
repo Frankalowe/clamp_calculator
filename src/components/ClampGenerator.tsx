@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
 
 interface FormData {
   rootFont: number;
@@ -23,7 +19,7 @@ const ClampGenerator = () => {
   
   const [result, setResult] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
-  const { toast } = useToast();
+  const [copyText, setCopyText] = useState<string>('Copy');
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     const numValue = parseFloat(value) || 0;
@@ -69,10 +65,8 @@ const ClampGenerator = () => {
     
     try {
       await navigator.clipboard.writeText(result);
-      toast({
-        title: "Copied!",
-        description: "Clamp value copied to clipboard",
-      });
+      setCopyText('Copied!');
+      setTimeout(() => setCopyText('Copy'), 2000);
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -81,11 +75,8 @@ const ClampGenerator = () => {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      
-      toast({
-        title: "Copied!",
-        description: "Clamp value copied to clipboard",
-      });
+      setCopyText('Copied!');
+      setTimeout(() => setCopyText('Copy'), 2000);
     }
   };
 
@@ -143,13 +134,32 @@ const ClampGenerator = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-primary p-5">
-      <div className="max-w-4xl mx-auto bg-glass backdrop-blur-xl rounded-3xl p-10 shadow-glass border border-glass">
+    <div 
+      className="min-h-screen p-5"
+      style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+    >
+      <div 
+        className="max-w-4xl mx-auto rounded-3xl p-10 border"
+        style={{ 
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+          borderColor: 'rgba(255, 255, 255, 0.2)'
+        }}
+      >
         <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-button bg-clip-text text-transparent">
+          <h1 
+            className="text-5xl font-bold mb-4"
+            style={{
+              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
             Clamp() Generator
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-gray-600">
             Create responsive typography with CSS clamp() function
           </p>
         </div>
@@ -157,14 +167,14 @@ const ClampGenerator = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {inputFields.map((field) => (
             <div key={field.id} className="space-y-2">
-              <Label 
+              <label 
                 htmlFor={field.id}
-                className="text-sm font-semibold text-foreground flex items-center gap-2 cursor-help"
+                className="text-sm font-semibold text-gray-700 flex items-center gap-2 cursor-help"
                 title={field.tooltip}
               >
                 {field.label}
-              </Label>
-              <Input
+              </label>
+              <input
                 id={field.id}
                 type="number"
                 value={field.value}
@@ -172,52 +182,81 @@ const ClampGenerator = () => {
                 max={field.max}
                 onChange={(e) => handleInputChange(field.id as keyof FormData, e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="transition-all duration-300 hover:border-primary focus:shadow-focus focus:-translate-y-0.5"
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-all duration-300 hover:border-gray-300"
+                style={{
+                  transform: 'translateY(0)',
+                  boxShadow: '0 0 0 rgba(102, 126, 234, 0)'
+                }}
+                onFocus={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 5px 15px rgba(102, 126, 234, 0.2)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 0 0 rgba(102, 126, 234, 0)';
+                }}
               />
             </div>
           ))}
         </div>
 
-        <Button
+        <button
           onClick={generateClamp}
-          className="w-full py-4 px-8 bg-gradient-button hover:shadow-hover hover:-translate-y-1 transition-all duration-300 text-lg font-semibold tracking-wider uppercase relative overflow-hidden group"
+          className="w-full py-4 px-8 text-white border-none rounded-xl text-lg font-semibold tracking-wider uppercase relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
+          style={{
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = '0 10px 25px rgba(102, 126, 234, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+          }}
         >
-          <span className="relative z-10">Generate Clamp() Value</span>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
-        </Button>
+          Generate Clamp() Value
+        </button>
 
         <div className="mt-8">
-          <Label className="text-lg font-semibold text-foreground mb-4 block">
+          <label className="text-lg font-semibold text-gray-700 mb-4 block">
             Generated CSS:
-          </Label>
+          </label>
           <div 
-            className={`relative p-6 rounded-xl border-2 min-h-[80px] flex items-center font-mono text-lg transition-all duration-300 ${
-              hasError 
-                ? 'bg-gradient-error border-error text-error' 
-                : result 
-                  ? 'bg-gradient-success border-success text-success group hover:scale-[1.01]' 
-                  : 'bg-muted border-border text-muted-foreground'
+            className={`relative p-6 rounded-xl border-2 min-h-[80px] flex items-center font-mono text-lg transition-all duration-300 group ${
+              hasError ? 'border-red-500' : result ? 'border-green-500' : 'border-gray-300'
             }`}
+            style={{
+              background: hasError 
+                ? 'linear-gradient(135deg, #ffe8e8, #fff0f0)' 
+                : result 
+                  ? 'linear-gradient(135deg, #e8f5e8, #f0fff0)' 
+                  : '#f8f9fa',
+              color: hasError ? '#c53030' : result ? '#2d7738' : '#6b7280'
+            }}
           >
             <span className="break-all pr-16">
               {result || "Your clamp() result will appear here. Fill in the values above and click generate!"}
             </span>
             {result && !hasError && (
-              <Button
+              <button
                 onClick={copyToClipboard}
-                variant="secondary"
-                size="sm"
-                className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-success hover:bg-success/90 text-white border-none"
+                className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded border-none"
               >
-                Copy
-              </Button>
+                {copyText}
+              </button>
             )}
           </div>
         </div>
 
-        <div className="mt-10 p-6 bg-glass-info rounded-xl border-l-4 border-info">
-          <h3 className="text-lg font-semibold text-info mb-3">How it works:</h3>
-          <p className="text-foreground/80 leading-relaxed">
+        <div 
+          className="mt-10 p-6 rounded-xl border-l-4"
+          style={{
+            background: 'rgba(52, 152, 219, 0.1)',
+            borderLeftColor: '#3498db'
+          }}
+        >
+          <h3 className="text-lg font-semibold text-blue-600 mb-3">How it works:</h3>
+          <p className="text-gray-700 leading-relaxed">
             The clamp() function takes three values: minimum, preferred (fluid), and maximum. 
             The preferred value uses viewport width (vw) units to create smooth scaling between your minimum and maximum breakpoints. 
             This ensures your typography is perfectly responsive across all screen sizes.
