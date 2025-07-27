@@ -8,6 +8,14 @@ interface FormData {
   maxFont: number;
 }
 
+interface UnitData {
+  rootFont: 'px';
+  minWidth: 'px';
+  maxWidth: 'px';
+  minFont: 'px' | 'rem';
+  maxFont: 'px' | 'rem';
+}
+
 const ClampGenerator = () => {
   const [formData, setFormData] = useState<FormData>({
     rootFont: 16,
@@ -17,6 +25,14 @@ const ClampGenerator = () => {
     maxFont: 80,
   });
   
+  const [units, setUnits] = useState<UnitData>({
+    rootFont: 'px',
+    minWidth: 'px',
+    maxWidth: 'px',
+    minFont: 'px',
+    maxFont: 'px',
+  });
+  
   const [result, setResult] = useState<string>('');
   const [hasError, setHasError] = useState<boolean>(false);
   const [copyText, setCopyText] = useState<string>('Copy');
@@ -24,6 +40,10 @@ const ClampGenerator = () => {
   const handleInputChange = (field: keyof FormData, value: string) => {
     const numValue = parseFloat(value) || 0;
     setFormData(prev => ({ ...prev, [field]: numValue }));
+  };
+
+  const handleUnitChange = (field: keyof UnitData, unit: 'px' | 'rem') => {
+    setUnits(prev => ({ ...prev, [field]: unit }));
   };
 
   const generateClamp = () => {
@@ -42,15 +62,19 @@ const ClampGenerator = () => {
       return;
     }
     
-    if (minFont >= maxFont) {
+    // Convert rem values to px for comparison
+    const minFontPx = units.minFont === 'rem' ? minFont * rootFont : minFont;
+    const maxFontPx = units.maxFont === 'rem' ? maxFont * rootFont : maxFont;
+    
+    if (minFontPx >= maxFontPx) {
       setResult("⚠️ Maximum font size must be greater than minimum font size.");
       setHasError(true);
       return;
     }
     
-    // Calculate clamp values
-    const remMin = minFont / rootFont;
-    const remMax = maxFont / rootFont;
+    // Calculate clamp values (always convert to rem for output)
+    const remMin = minFontPx / rootFont;
+    const remMax = maxFontPx / rootFont;
     const slope = (remMax - remMin) / (maxWidth - minWidth) * 100;
     const intercept = remMin - (slope * minWidth / 100);
     
@@ -92,44 +116,49 @@ const ClampGenerator = () => {
 
   const inputFields = [
     {
-      id: 'rootFont',
-      label: '📏 Root HTML Font Size (px):',
+      id: 'rootFont' as keyof FormData,
+      label: '📏 Root HTML Font Size',
       tooltip: 'Base font size of your HTML element',
       value: formData.rootFont,
       min: 1,
       max: 100,
+      allowRem: false,
     },
     {
-      id: 'minWidth',
-      label: '📱 Min Viewport Width (px):',
+      id: 'minWidth' as keyof FormData,
+      label: '📱 Min Viewport Width',
       tooltip: 'Minimum viewport width for scaling',
       value: formData.minWidth,
       min: 100,
       max: 2000,
+      allowRem: false,
     },
     {
-      id: 'maxWidth',
-      label: '🖥️ Max Viewport Width (px):',
+      id: 'maxWidth' as keyof FormData,
+      label: '🖥️ Max Viewport Width',
       tooltip: 'Maximum viewport width for scaling',
       value: formData.maxWidth,
       min: 500,
       max: 5000,
+      allowRem: false,
     },
     {
-      id: 'minFont',
-      label: '🔤 Min Font Size (px):',
+      id: 'minFont' as keyof FormData,
+      label: '🔤 Min Font Size',
       tooltip: 'Smallest font size at minimum viewport',
       value: formData.minFont,
       min: 8,
-      max: 200,
+      max: 300,
+      allowRem: true,
     },
     {
-      id: 'maxFont',
-      label: '🔠 Max Font Size (px):',
+      id: 'maxFont' as keyof FormData,
+      label: '🔠 Max Font Size',
       tooltip: 'Largest font size at maximum viewport',
       value: formData.maxFont,
       min: 10,
-      max: 300,
+      max: 400,
+      allowRem: true,
     },
   ];
 
@@ -172,30 +201,58 @@ const ClampGenerator = () => {
                 className="text-sm font-semibold text-gray-700 flex items-center gap-2 cursor-help"
                 title={field.tooltip}
               >
-                {field.label}
+                {field.label} ({units[field.id]}):
               </label>
-              <input
-                id={field.id}
-                type="number"
-                value={field.value}
-                min={field.min}
-                max={field.max}
-                onChange={(e) => handleInputChange(field.id as keyof FormData, e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-all duration-300 hover:border-gray-300"
-                style={{
-                  transform: 'translateY(0)',
-                  boxShadow: '0 0 0 rgba(102, 126, 234, 0)'
-                }}
-                onFocus={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 5px 15px rgba(102, 126, 234, 0.2)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 0 0 rgba(102, 126, 234, 0)';
-                }}
-              />
+              <div className="flex gap-2">
+                <input
+                  id={field.id}
+                  type="number"
+                  value={field.value}
+                  min={field.min}
+                  max={field.max}
+                  onChange={(e) => handleInputChange(field.id, e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1 p-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-all duration-300 hover:border-gray-300"
+                  style={{
+                    transform: 'translateY(0)',
+                    boxShadow: '0 0 0 rgba(102, 126, 234, 0)'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 5px 15px rgba(102, 126, 234, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 0 0 rgba(102, 126, 234, 0)';
+                  }}
+                />
+                {field.allowRem && (
+                  <div className="flex rounded-lg border-2 border-gray-200 overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => handleUnitChange(field.id as keyof UnitData, 'px')}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        units[field.id] === 'px'
+                          ? 'bg-purple-500 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      px
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleUnitChange(field.id as keyof UnitData, 'rem')}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        units[field.id] === 'rem'
+                          ? 'bg-purple-500 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      rem
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
