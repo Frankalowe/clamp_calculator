@@ -157,7 +157,7 @@ const ClampGenerator = () => {
               backgroundClip: 'text'
             }}
           >
-            Clamp() Generator
+            Clamp Calculator
           </h1>
           <p className="text-lg text-gray-600">
             Create responsive typography with CSS clamp() function
