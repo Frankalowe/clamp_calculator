@@ -63,6 +63,29 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-button': 'var(--gradient-button)',
+				'gradient-success': 'var(--gradient-success)',
+				'gradient-error': 'var(--gradient-error)',
+			},
+			backgroundColor: {
+				'glass': 'var(--gradient-card)',
+				'glass-info': 'var(--gradient-info)',
+			},
+			boxShadow: {
+				'glass': 'var(--shadow-glass)',
+				'hover': 'var(--shadow-hover)',
+				'focus': 'var(--shadow-focus)',
+			},
+			borderColor: {
+				'glass': 'var(--color-glass-border)',
+			},
+			colors: {
+				success: 'hsl(var(--color-success))',
+				error: 'hsl(var(--color-error))',
+				info: 'hsl(var(--color-info))',
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
